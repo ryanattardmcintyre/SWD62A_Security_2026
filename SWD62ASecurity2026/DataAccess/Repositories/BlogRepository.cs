@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccess.Context;
 
 namespace DataAccess.Repositories
 {
@@ -14,7 +15,8 @@ namespace DataAccess.Repositories
     {
         private readonly BlogDbContext _context;
         public BlogRepository(BlogDbContext context)
-        {             _context = context;
+        {            
+            _context = context;
         }
 
 
@@ -52,7 +54,7 @@ namespace DataAccess.Repositories
             return myREtrievedBlogs.AsQueryable();
         }
 
-        public bool DoesUserExist(string email, string password)
+        /*public bool DoesUserExist(string email, string password)
         {
             SqlCommand cmd =
                new SqlCommand("SELECT Count(*) FROM Users Where Email =@email and password =@password", new SqlConnection("YourConnectionString"));
@@ -70,6 +72,12 @@ namespace DataAccess.Repositories
             //"SELECT Count(*) FROM Users Where Email ='admin' and password ='' OR 1=1;--'"
             //email: admin
             //password: ' OR 1=1;--
+        }*/
+
+        public void AddBlog(Blog b)
+        {
+            _context.Blogs.Add(b);
+            _context.SaveChanges();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,13 @@ using Domain.Models;
 
 namespace DataAccess.Context
 {
-    public class BlogDbContext : IdentityDbContext
+    public class BlogDbContext : IdentityDbContext<IdentityUser> // or DbContext
     {
-        public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
+        public BlogDbContext(DbContextOptions<BlogDbContext> options)
+            : base(options)
         {
         }
+
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<SharingPermission> SharingPermissions { get; set; }
     }

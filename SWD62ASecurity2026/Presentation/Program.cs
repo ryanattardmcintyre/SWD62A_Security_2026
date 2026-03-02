@@ -1,4 +1,5 @@
 using DataAccess.Context;
+using DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(
@@ -27,6 +29,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(
     }
 )
     .AddEntityFrameworkStores<BlogDbContext>();
+
+
+builder.Services.AddScoped<BlogRepository>();
+
 builder.Services.AddControllersWithViews();
 
 // Register Google external login without overriding Identity's default schemes

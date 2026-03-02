@@ -1,0 +1,24 @@
+﻿@model IEnumerable<Domain.Models.Blog>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Created At</th>
+            <th>Content Preview</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach(var b in Model)
+    {
+        <tr>
+            <td>@b.Id</td>
+            <td>@b.Title</td>
+            <td>@b.CreatedAt.ToString("dd/MM/yyyy")</td>
+            <td>@Html.Raw(b.Content)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
