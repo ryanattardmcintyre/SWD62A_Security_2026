@@ -1,19 +1,44 @@
 ﻿@model Domain.Models.Blog
 <form action="/Blog/Create" method="post">
     @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
     <div>
         <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required />
+        <input type="text" id="title" name="Title" />
+        
+        <span asp-validation-for="Title"  class="text-danger" ></span>
+
     </div>
     <div>
         <label for="content">Content:</label>
-        <textarea id="content" name="content" required></textarea>
+        <textarea id="content" name="Content"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
     </div>
     <div>
         <label for="Public">Public Blog:</label>
-        <input type="checkbox" name="Public" required />
+        <input type="checkbox" name="Public" />
+        <span asp-validation-for="Public" class="text-danger"></span>
     </div>
 
+    <div>
+        <label for="Password">Password:</label>
+        <input type="password" name="Password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label for="ConfirmPassword">Confirm Password:</label>
+        <input type="password" name="ConfirmPassword" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label for="Price">Price (type 0 if free):</label>
+        <input type="number" name="Price" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
 
     <button type="submit">Create Blog</button>
 </form>

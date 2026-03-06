@@ -22,14 +22,15 @@ namespace Presentation.Controllers
         public IActionResult Create(Blog b)
         { 
 
-            string regex = @"^[a-z][A-Z][0-9]*$";
-            if (!System.Text.RegularExpressions.Regex.IsMatch(b.Content, regex))
+            //note: applying validators in the controller requires forcing them to run
+            //ModelState.IsValid will force the validators to run. be aware validators will
+            //not always run on the client side
+            if(ModelState.IsValid == false)
             {
-                TempData["error"] = "Content contains prohibited symbols";
+                TempData["error"] = "Validation failed, please correct the errors and try again";
                 return View(b);
-            }
-
-
+            }   
+            
 
             b.AuthorEmail = ""; b.FilePath = "";
             b.CreatedAt = DateTime.Now;
