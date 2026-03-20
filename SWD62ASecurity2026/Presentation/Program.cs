@@ -3,6 +3,7 @@ using DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Data;
 
@@ -27,7 +28,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(
 
         options.Lockout.MaxFailedAccessAttempts = 3;
     }
-)
+).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<BlogDbContext>();
 
 
@@ -52,6 +53,8 @@ builder.Services.AddRazorPages();
 
 
 var app = builder.Build();
+ 
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -79,3 +82,6 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+
+

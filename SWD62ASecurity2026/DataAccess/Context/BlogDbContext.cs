@@ -15,7 +15,10 @@ namespace DataAccess.Context
         public BlogDbContext(DbContextOptions<BlogDbContext> options)
             : base(options)
         {
+
         }
+
+      
 
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<SharingPermission> SharingPermissions { get; set; }

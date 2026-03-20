@@ -1,5 +1,5 @@
 ﻿@model Domain.Models.Blog
-<form action="/Blog/Create" method="post">
+<form action="/Blog/Create" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
 
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
@@ -17,8 +17,13 @@
         <span asp-validation-for="Content" class="text-danger"></span>
     </div>
     <div>
-        <label for="Public">Public Blog:</label>
-        <input type="checkbox" name="Public" />
+        <label>Public Blog:</label>
+        <select name="Public">
+            <options>
+                <option value="1">Public</option>
+                <option value="0">Private</option>
+            </options>
+        </select>
         <span asp-validation-for="Public" class="text-danger"></span>
     </div>
 
@@ -38,6 +43,12 @@
         <label for="Price">Price (type 0 if free):</label>
         <input type="number" name="Price" />
         <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label for="content">File:</label>
+        <input type="file" class="form-control" name="file" accept="*.jpg" />
+        <span name="file" class="text-danger"></span>
     </div>
 
     <button type="submit">Create Blog</button>

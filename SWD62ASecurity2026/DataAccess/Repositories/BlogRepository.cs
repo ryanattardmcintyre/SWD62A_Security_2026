@@ -8,15 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccess.Context;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Repositories
 {
     public class BlogRepository
     {
         private readonly BlogDbContext _context;
-        public BlogRepository(BlogDbContext context)
+        public BlogRepository(BlogDbContext context, IConfiguration config)
         {            
             _context = context;
+            _context.Database.SetConnectionString(config.GetConnectionString("BlogUserConnection"));
         }
 
 
@@ -24,6 +26,11 @@ namespace DataAccess.Repositories
         {
             //LINQ to Entities
             //good practice:
+            //var todeleteBlog = _context.Blogs.ElementAt(0); //testing the permission applied with BlogUser
+            //_context.Blogs.Remove(todeleteBlog);
+            //_context.SaveChanges();
+
+
             return _context.Blogs;
         }
 
