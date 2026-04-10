@@ -1,6 +1,8 @@
 ﻿using DataAccess.Repositories;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Filters;
 
 namespace Presentation.Controllers
 {
@@ -95,6 +97,15 @@ namespace Presentation.Controllers
             _blogsRepository.AddBlog(b);
             TempData["success"] = "Blog added successfully";
             return View();
+        }
+
+
+        [HasDeletePermission()]
+        [Authorize(Roles ="admin")]
+        public IActionResult Delete(int id)
+        {
+            _blogsRepository.DeleteBlog(id);
+            return Content("Blog with id " + id + " has been deleted");
         }
     }
 }

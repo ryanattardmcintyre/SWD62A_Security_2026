@@ -15,9 +15,11 @@ namespace DataAccess.Repositories
     public class BlogRepository
     {
         private readonly BlogDbContext _context;
+        private readonly IConfiguration _config;
         public BlogRepository(BlogDbContext context, IConfiguration config)
-        {            
+        {
             _context = context;
+            _config = config;
             _context.Database.SetConnectionString(config.GetConnectionString("BlogUserConnection"));
         }
 
@@ -44,7 +46,7 @@ namespace DataAccess.Repositories
             cmd.Parameters.AddWithValue("@keyword", keyword);
 
             SqlDataReader myREader = cmd.ExecuteReader();
-            while(myREader.Read())
+            while (myREader.Read())
             {
                 Blog b = new Blog();
                 b.Id = (int)myREader["Id"];
@@ -85,6 +87,20 @@ namespace DataAccess.Repositories
         {
             _context.Blogs.Add(b);
             _context.SaveChanges();
+        }
+
+
+        public void DeleteBlog(int id)
+        {
+            _context.Database.SetConnectionString(_config.GetConnectionString("DefaultConnection"));
+
+
+            var blogToDelete = _context.Blogs.SingleOrDefault(x => x.Id == id);
+            if (blogToDelete != null)
+            {
+                _context.Blogs.Remove(blogToDelete);
+                _context.SaveChanges();
+            }
         }
     }
 }
