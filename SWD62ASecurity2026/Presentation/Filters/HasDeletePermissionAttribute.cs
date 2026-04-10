@@ -10,9 +10,10 @@ namespace Presentation.Filters
     {
 
 
-        public HasDeletePermissionAttribute() 
+        public HasDeletePermissionAttribute(string permission) 
             : base(typeof(DeleteBlogAuthorizationFilter))
         {
+            Arguments = new object[] { permission };
         }
     }
 }

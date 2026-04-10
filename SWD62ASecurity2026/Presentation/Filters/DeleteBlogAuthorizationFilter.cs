@@ -6,7 +6,11 @@ namespace Presentation.Filters
     public class DeleteBlogAuthorizationFilter : IAuthorizationFilter
     {
 
-   
+        private string _permission;
+        public DeleteBlogAuthorizationFilter(string permission)
+        {
+            _permission= permission;
+        }
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var id = context.RouteData.Values["id"];
@@ -16,10 +20,7 @@ namespace Presentation.Filters
                 return;
             }
 
-             var arguments = context.ActionDescriptor.Parameters;
-             string otherAllowedRoles = arguments[0].ParameterType.GenericTypeArguments[0].Name;
-            
-            foreach (var role in otherAllowedRoles.Split(','))
+            foreach (var role in _permission.Split(','))
             {
                 if (context.HttpContext.User.IsInRole(role))
                 {

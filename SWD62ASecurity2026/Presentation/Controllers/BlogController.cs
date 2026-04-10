@@ -100,8 +100,7 @@ namespace Presentation.Controllers
         }
 
 
-        [HasDeletePermission()]
-        [Authorize(Roles ="admin")]
+        [HasDeletePermission("admin")]
         public IActionResult Delete(int id)
         {
             _blogsRepository.DeleteBlog(id);
