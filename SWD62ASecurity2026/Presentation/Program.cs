@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Data;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +49,12 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddRazorPages();
 
+var log = new LoggerConfiguration().
+    MinimumLevel.Override("Microsoft.AspNetCore.Authentication.Google", Serilog.Events.LogEventLevel.Error)
+    .WriteTo
+    .File("logs/log-.txt", rollingInterval: RollingInterval.Day).CreateLogger();
 
+builder.Logging.AddSerilog(log);
 
 
 
@@ -75,6 +81,12 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+//ReExecute vs Redirect:
+//ReExecute happens on the server side  (the url in the browser stays the same)
+//Redirect happens on the client side
+
+app.UseStatusCodePagesWithReExecute("/Home/StatusCode", "?code={0}");
 
 app.MapControllerRoute(
     name: "default",

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccess.Context;
 using Microsoft.Extensions.Configuration;
+using Domain.Exceptions;
 
 namespace DataAccess.Repositories
 {
@@ -102,5 +103,51 @@ namespace DataAccess.Repositories
                 _context.SaveChanges();
             }
         }
+
+        //updates one permission on a blog
+
+
+        public void UpdatePermissionOnBlog(SharingPermission permission)
+        {
+            _context.SharingPermissions.Add(permission);
+            _context.SaveChanges();
+        }
+
+        //updates multiple permissions on a/multiple blogs
+        //start transaction
+        //1, ryanattard@gmail.com, READ
+        //1, joeborg@gmail.com, READ
+        //1, joeborg1@gmail.com, READ
+        //1, ryanattard@gmail.com, READ //<<<<< an error will be raised reason: you run out of space
+        //1, joeborg2@gmail.com, READ
+        //1, joeborg3@gmail.com, READ
+        //1, joeborg4@gmail.com, READ
+        //1, joeborg5@gmail.com, READ
+        //commit transaction 
+        public void UpdatePermissionsOnBlog(SharingPermission [] permissions )
+        {
+            _context.Database.SetConnectionString(_config.GetConnectionString("DefaultConnection"));
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                foreach (var permission in permissions)
+                {
+                    UpdatePermissionOnBlog(permission);
+                   // throw new Exception("Simulated error to test transactions");
+                }
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                //log the exception
+                throw new BlogsException("Error happened while updating permissions on blog");
+
+            }
+
+        }
+
+
+        
     }
 }

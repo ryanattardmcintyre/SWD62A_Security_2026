@@ -1,4 +1,5 @@
 ﻿using DataAccess.Repositories;
+using Domain.Exceptions;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,12 +26,12 @@ namespace Presentation.Controllers
         {
             string relativePath = "";
 
-            if(file != null)
+            if (file != null)
             {
                 //wwwroot is public
                 //outside the wwwroot folder is private, only accessible by the server
 
-                if(System.IO.Path.GetExtension(file.FileName).ToLower() != ".jpg")
+                if (System.IO.Path.GetExtension(file.FileName).ToLower() != ".jpg")
                 {
                     //for this to appear we must create a span with asp-validation-for="file" in the view
                     ModelState.AddModelError("file", "Only .jpg files are allowed");
@@ -54,10 +55,10 @@ namespace Presentation.Controllers
                 string absolutePath = "";
                 if (b.Public == true)
                 {
-                   absolutePath = host.WebRootPath + "/publicBlogImages";
+                    absolutePath = host.WebRootPath + "/publicBlogImages";
                     relativePath = "/publicBlogImages/" + uniqueFilename;
                 }
-                else 
+                else
                 {
                     relativePath = "/privateBlogImages/" + uniqueFilename;
                     absolutePath = host.ContentRootPath + "/privateBlogImages";
@@ -84,7 +85,7 @@ namespace Presentation.Controllers
             {
                 TempData["error"] = "Validation failed, please correct the errors and try again";
                 return View(b);
-            }   
+            }
 
             b.AuthorEmail = ""; b.FilePath = "";
             b.CreatedAt = DateTime.Now;
@@ -105,6 +106,47 @@ namespace Presentation.Controllers
         {
             _blogsRepository.DeleteBlog(id);
             return Content("Blog with id " + id + " has been deleted");
+        }
+
+
+
+        public IActionResult TestPermissionsSaving()
+        {
+            try
+            {
+                SharingPermission p1 = new SharingPermission()
+                {
+                    BlogFK = 4,
+                    UserEmail = "ryanattard@gmail.com",
+                    PermissionType = "Read"
+                };
+
+                SharingPermission p2 = new SharingPermission()
+                {
+                    BlogFK = 4,
+                    UserEmail = "joeborg@gmail.com",
+                    PermissionType = "Read"
+                };
+
+                List<SharingPermission> myPermissions = new List<SharingPermission>();
+                myPermissions.Add(p1); myPermissions.Add(p2);
+
+                _blogsRepository.UpdatePermissionsOnBlog(myPermissions.ToArray());
+
+                return Content("permissions saved");
+            }
+            catch (BlogsException ex)
+            {
+                //email the admin of the site
+                
+                return Content("Error while updating permissions");
+            }
+            catch (Exception ex)
+            {
+                //log the ex.Message and ex.StackTrace in a file or cloud
+                
+                return Content("Error - we 've logged the error ;try again later");
+            }
         }
     }
 }
