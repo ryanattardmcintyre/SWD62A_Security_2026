@@ -4,6 +4,7 @@ using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Filters;
+using System.Runtime.Intrinsics.Arm;
 
 namespace Presentation.Controllers
 {
@@ -138,15 +139,46 @@ namespace Presentation.Controllers
             catch (BlogsException ex)
             {
                 //email the admin of the site
-                
+
                 return Content("Error while updating permissions");
             }
             catch (Exception ex)
             {
                 //log the ex.Message and ex.StackTrace in a file or cloud
-                
+
                 return Content("Error - we 've logged the error ;try again later");
             }
+        }
+
+
+        public IActionResult Details(string id)
+        {
+            Presentation.Utilities.SymmetricEncryptionHelper encryptionHelper = 
+                new Presentation.Utilities.SymmetricEncryptionHelper();
+
+            var myParams =
+                  encryptionHelper.GenerateParameters(2, System.Security.Cryptography.Aes.Create(),
+                  "p@$$w0rd1234567");
+
+
+            //What conversion method should you use? the Convert or the Encoding?
+
+            id = id.Replace("-", "+").Replace("_", "/").Replace("|", "=");
+
+            byte[] cipher = Convert.FromBase64String(id);
+
+
+
+            byte [] clearTextAsBytes =encryptionHelper.Decrypt(System.Security.Cryptography.Aes.Create()
+                , myParams, cipher);
+
+            string originalId = System.Text.Encoding.UTF8.GetString(clearTextAsBytes);
+
+
+            Blog b = _blogsRepository.GetBlogs().
+                FirstOrDefault(b => b.Id == Convert.ToInt32(originalId));   
+            if (b == null) return Content("Blog not found");
+            return View(b);
         }
     }
 }

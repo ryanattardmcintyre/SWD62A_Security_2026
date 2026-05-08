@@ -7,6 +7,7 @@
             <th>Title</th>
             <th>Created At</th>
             <th>Content Preview</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -18,6 +19,32 @@
             <td>@b.CreatedAt.ToString("dd/MM/yyyy")</td>
             <td>@Html.Raw(b.Content)
             </td>
+
+                @{
+                    Presentation.Utilities.SymmetricEncryptionHelper encryptionHelper = new Presentation.Utilities.SymmetricEncryptionHelper();
+
+                    string idAsString = b.Id.ToString();
+                    byte [] idAsBytes = System.Text.Encoding.UTF8.GetBytes(idAsString);
+
+                    var myParams =
+                    encryptionHelper.GenerateParameters(2, System.Security.Cryptography.Aes.Create(),
+                    "p@$$w0rd1234567");
+
+                    byte [] cipher = encryptionHelper.Encrypt(
+                    System.Security.Cryptography.Aes.Create(),
+                    myParams,
+                    idAsBytes);
+
+                    string cipherAsBase64 = System.Convert.ToBase64String(cipher);
+
+                    //what if the enc algorithm + conversion yields a +, /, = ? We can replace those with URL-safe characters
+                    cipherAsBase64 = cipherAsBase64.Replace("+", "-").Replace("/", "_").Replace("=", "|");
+
+            }
+
+
+
+            <td><a href="/Blog/Details?id=@cipherAsBase64">View Details</a></td>
         </tr>
     }
     </tbody>

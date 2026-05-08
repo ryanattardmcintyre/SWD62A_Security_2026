@@ -6,6 +6,23 @@ namespace Presentation.Controllers
 {
     public class CryptographyController : Controller
     {
+
+        public IActionResult TestAsymmetric()
+        {
+            AsymmetricParameters parameters = AsymmetricEncryptionHelper.GenerateKeys();
+
+
+            string dataToEncrypt = "This is some data that I want to encrypt";
+            string cipher = AsymmetricEncryptionHelper.Encrypt(dataToEncrypt, parameters.PublicKey);
+
+            //--------------------------------------------------
+
+            string originalValue = AsymmetricEncryptionHelper.Decrypt(cipher, parameters.PrivateKey);
+            
+            return Content($"Cipher is {cipher} Original Value is {originalValue}");
+
+        }
+
         public IActionResult TestSymmetric()
         { 
             SymmetricEncryptionHelper helper = new SymmetricEncryptionHelper();
