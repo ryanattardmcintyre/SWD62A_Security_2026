@@ -6,7 +6,31 @@ namespace Presentation.Controllers
 {
     public class CryptographyController : Controller
     {
+        public IActionResult TestHybrid()
+        {
+            string filename = @"C:\\Users\\attar\\source\\repos\\SWD62A_Security_2026\\SWD62ASecurity2026\\Presentation\\logs\\log-20260413.txt";
+            MemoryStream msContainingOriginalFileData = new MemoryStream();
+            using (var f = new FileStream(filename, FileMode.Open))
+            {
+                f.CopyTo(msContainingOriginalFileData);
+            }
 
+            var myAsymmParameters = AsymmetricEncryptionHelper.GenerateKeys();
+
+
+            MemoryStream msOut = 
+                HybridEncryptionHelper.Encrypt(msContainingOriginalFileData, myAsymmParameters.PublicKey);
+
+            string outputFilename = @"C:\\Users\\attar\\source\\repos\\SWD62A_Security_2026\\SWD62ASecurity2026\\Presentation\\logs\\log-20260413-encrypted.txt";
+            using (var f = new FileStream(outputFilename, FileMode.CreateNew, FileAccess.Write))
+            {
+                msOut.CopyTo(f);
+            }
+
+            //delete the orignal file
+
+            return Content("done");
+        }
         public IActionResult TestAsymmetric()
         {
             AsymmetricParameters parameters = AsymmetricEncryptionHelper.GenerateKeys();
