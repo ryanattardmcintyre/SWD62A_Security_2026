@@ -6,6 +6,29 @@ namespace Presentation.Controllers
 {
     public class CryptographyController : Controller
     {
+
+        public IActionResult TestSigning()
+        {
+            string dataToSign = "hello world";
+
+            var asymmetricParameters = AsymmetricEncryptionHelper.GenerateKeys();
+
+            string signature = 
+                DigitalSigningHelper.SignData(Encoding.UTF8.GetBytes(dataToSign), asymmetricParameters.PrivateKey);
+
+            //-----------------------------------------------------------------------
+
+            bool valid = DigitalSigningHelper.VerifyData(
+                Encoding.UTF8.GetBytes(dataToSign), asymmetricParameters.PublicKey, signature);
+
+            dataToSign = "hello world!";
+
+            bool valid2 = DigitalSigningHelper.VerifyData(
+                Encoding.UTF8.GetBytes(dataToSign), asymmetricParameters.PublicKey, signature);
+
+            return Content($"Signature is {signature} TestCase 1 is {valid} Test case2 is {valid2}");
+        }
+
         public IActionResult TestHybrid()
         {
             string filename = @"C:\\Users\\attar\\source\\repos\\SWD62A_Security_2026\\SWD62ASecurity2026\\Presentation\\logs\\log-20260413.txt";

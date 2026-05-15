@@ -18,8 +18,8 @@ namespace Presentation.Utilities
         {
 
             SymmetricParameters parameters = new SymmetricParameters();
-            
-            switch(choiceOfGeneration)
+
+            switch (choiceOfGeneration)
             {
                 case 0:
                     //Approach 1: you randomly generate a number of bytes for the key and IV
@@ -70,7 +70,7 @@ namespace Presentation.Utilities
 
             //Memorystream its just a stream of data which holds your data temporarily in memory
             MemoryStream outputStream = new MemoryStream();
-            
+
             MemoryStream inputStream = new MemoryStream(data);
             inputStream.Position = 0;
 
@@ -101,6 +101,49 @@ namespace Presentation.Utilities
             }
             outputStream.Position = 0;
             return outputStream.ToArray();
+        }
+
+        //This method uses MemoryStream only
+        public MemoryStream Encrypt(MemoryStream msIn, SymmetricAlgorithm alg, SymmetricParameters parameters)
+        {
+            alg.Key = parameters.Key; alg.IV = parameters.IV;
+
+            MemoryStream msOut = new MemoryStream(); //encrypted data goes here
+
+            CryptoStream cryptoStream = new CryptoStream(msIn, alg.CreateEncryptor(), CryptoStreamMode.Read);
+            cryptoStream.CopyTo(msOut);
+
+            return msOut;
+        }
+
+        //This method uses byte[]
+        public void Encrypt(string fileInPath, string fileOutPath,
+            SymmetricAlgorithm alg, SymmetricParameters parameters)
+        {
+            alg.Key = parameters.Key; alg.IV = parameters.IV;
+
+            using (FileStream fsIn = new FileStream(fileInPath, FileMode.Open, FileAccess.Read))
+            {
+                using (FileStream fsOut = new FileStream(fileOutPath, FileMode.Create, FileAccess.Write))
+                {
+                    CryptoStream cryptoStream = new CryptoStream(fsIn, alg.CreateEncryptor(), CryptoStreamMode.Read);
+                    cryptoStream.CopyTo(fsOut);
+                }
+            }
+        }
+        public void Decrypt(string fileInPath, string fileOutPath,
+            SymmetricAlgorithm alg, SymmetricParameters parameters)
+        {
+            alg.Key = parameters.Key; alg.IV = parameters.IV;
+            using (FileStream fsIn = new FileStream(fileInPath, FileMode.Open, FileAccess.Read))
+            {
+                using (FileStream fsOut = new FileStream(fileOutPath, FileMode.Create, FileAccess.Write))
+                {
+                    CryptoStream cryptoStream = new CryptoStream(fsIn,
+                        alg.CreateDecryptor(), CryptoStreamMode.Read);
+                    cryptoStream.CopyTo(fsOut);
+                }
+            }
         }
     }
 }
