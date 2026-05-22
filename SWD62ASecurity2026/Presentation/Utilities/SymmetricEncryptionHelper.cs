@@ -68,6 +68,9 @@ namespace Presentation.Utilities
             alg.Key = paramters.Key;
             alg.IV = paramters.IV;
 
+
+
+
             //Memorystream its just a stream of data which holds your data temporarily in memory
             MemoryStream outputStream = new MemoryStream();
 
